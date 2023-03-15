@@ -32,20 +32,21 @@ public class Gfg {
 
         log.info("calculate distance between two coordinates");
 
-        previousLongitude = toRadians(previousLongitude);
-        currentLongitude = toRadians(currentLongitude);
-        previousLatitude = toRadians(previousLatitude);
-        currentLatitude = toRadians(currentLatitude);
-
-        double subtractingLongitude = currentLongitude - previousLongitude;
-        double subtractingLatitude = currentLatitude - previousLatitude;
-        double intermediateCalculation = pow(sin(subtractingLatitude / 2), 2)
-                + cos(previousLatitude) * cos(currentLatitude)
-                * pow(sin(subtractingLongitude / 2), 2);
-
-        double arc = 2 * asin(sqrt(intermediateCalculation));
-
-        return (arc * RADIUS_EARTH);
+//        previousLongitude = toRadians(previousLongitude);
+//        currentLongitude = toRadians(currentLongitude);
+//        previousLatitude = toRadians(previousLatitude);
+//        currentLatitude = toRadians(currentLatitude);
+//
+//        double subtractingLongitude = currentLongitude - previousLongitude;
+//        double subtractingLatitude = currentLatitude - previousLatitude;
+//        double intermediateCalculation = pow(sin(subtractingLatitude / 2), 2)
+//                + cos(previousLatitude) * cos(currentLatitude)
+//                * pow(sin(subtractingLongitude / 2), 2);
+//
+//        double arc = 2 * asin(sqrt(intermediateCalculation));
+//
+//        return (arc * RADIUS_EARTH);
+        return 0;
     }
 
 

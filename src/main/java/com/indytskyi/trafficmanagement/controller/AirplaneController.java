@@ -1,6 +1,6 @@
 package com.indytskyi.trafficmanagement.controller;
 
-import com.indytskyi.dto.StartTripDto;
+import com.indytskyi.trafficmanagement.dto.StartTripDto;
 import com.indytskyi.trafficmanagement.model.Airplane;
 import com.indytskyi.trafficmanagement.service.PlaneCalculation;
 import com.indytskyi.trafficmanagement.service.impl.AirplaneService;
@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController

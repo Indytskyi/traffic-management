@@ -7,6 +7,9 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
+import com.indytskyi.trafficmanagement.model.Airplane;
+import com.indytskyi.trafficmanagement.service.PlaneCalculation;
+import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -16,6 +19,11 @@ class TrafficManagementApplicationTests {
 
     private static final double EARTH_RADIUS = 6371000.0; // in meters
 
+
+    @Test
+    void superTest() {
+        PlaneCalculation.calculateRoute(Airplane.builder().build(), new ArrayList<>());
+    }
     @Test
     void contextLoads() {
     }
@@ -119,7 +127,7 @@ class TrafficManagementApplicationTests {
     @Test
     void asdas() {
 
-        some(49.863535, 23.962257, 0, 100, 1);
+        some(49.863535, 23.962257, 40, 100, 1);
 
     }
 
