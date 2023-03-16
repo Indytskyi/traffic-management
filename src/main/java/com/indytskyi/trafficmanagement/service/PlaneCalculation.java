@@ -74,20 +74,7 @@ public class PlaneCalculation {
                     100,
                     1);
 
-            temporaryPoint = TemporaryPoint.builder()
-                    .longitude(coordinates[0])
-                    .latitude(coordinates[1])
-                    .altitudeMeters(100.0)
-                    .flightSpeedMetersPerSecond(temporaryPoint.getFlightSpeedMetersPerSecond())
-                    .headingDegrees(temporaryPoint.getHeadingDegrees())
-                    .build();
-
-            airplane.getFlights()
-                    .get(airplane.getFlights().size() - 1)
-                    .getPassedPoints()
-                    .add(temporaryPoint);
-
-            airplaneService.save(airplane);
+            temporaryPoint = saveToAirplaneTemporaryPoint(airplane, temporaryPoint, coordinates);
 
             TimeUnit.SECONDS.sleep(1);
         }
@@ -124,19 +111,26 @@ public class PlaneCalculation {
                     characteristic.getMaxSpeedMetersPerSecond(),
                     1);
 
-            temp = TemporaryPoint.builder()
-                    .longitude(coordinates[0])
-                    .latitude(coordinates[1])
-                    .flightSpeedMetersPerSecond(characteristic.getMaxSpeedMetersPerSecond())
-                    .headingDegrees(headingDegreesTemp)
-                    .build();
+            temp = saveToAirplaneTemporaryPoint(airplane, temp, coordinates);
 
-            airplane.getFlights().get(airplane.getFlights().size() - 1).getPassedPoints().add(temp);
-
-            airplaneService.save(airplane);
             TimeUnit.SECONDS.sleep(1);
         }
 
+        return temp;
+    }
+
+    private TemporaryPoint saveToAirplaneTemporaryPoint(Airplane airplane, TemporaryPoint temp, double[] coordinates) {
+        temp = TemporaryPoint.builder()
+                .longitude(coordinates[0])
+                .latitude(coordinates[1])
+                .altitudeMeters(100.0)
+                .flightSpeedMetersPerSecond(temp.getFlightSpeedMetersPerSecond())
+                .headingDegrees(temp.getHeadingDegrees())
+                .build();
+
+        airplane.getFlights().get(airplane.getFlights().size() - 1).getPassedPoints().add(temp);
+
+        airplaneService.save(airplane);
         return temp;
     }
 

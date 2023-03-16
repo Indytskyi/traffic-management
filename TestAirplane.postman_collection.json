@@ -1,0 +1,48 @@
+{
+	"info": {
+		"_postman_id": "43021291-4bd9-4264-bf4d-61a40c1b2d53",
+		"name": "TestAirplane",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22360272"
+	},
+	"item": [
+		{
+			"name": "add airplane",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\" : 1,\n    \"airplaneCharacteristic\" : {\n        \"maxSpeedMetersPerSecond\" : 20,\n        \"maxAccelerationMetersPerSecondSquared\" : 10,\n        \"verticalVelocityMetersPerSecond\" : 10,\n        \"courseChangeRateDegreesPerSecond\" : 5\n    },\n    \"position\" : {\n        \"latitude\" : 23.962257 ,\n        \"longitude\" : 49.863535,\n        \"altitudeMeters\" : 800,\n        \"flightSpeedMetersPerSecond\" : 100,\n        \"headingDegrees\" : 10\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/airplane",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"airplane"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start drone",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
