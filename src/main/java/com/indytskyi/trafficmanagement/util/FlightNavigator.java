@@ -58,22 +58,47 @@ public class FlightNavigator {
     /**
      * A method that calculate new position of an airplane after turning
      */
-    public static double[] airplaneShift(double latitude, double longitude, double angle, double speed, double time) {
+    public static double[] airplaneShift(double latitude, double longitude, double angle, double speed) {
 
-        double angleRad = Math.toRadians(angle);
-        double distance = speed * time;
+        // Convert speed from meters per second to meters per millisecond
+        double speedPerMs = speed / 1000;
+        // Calculate the distance the airplane travels in one second based on its speed
+        double distanceTraveled = speedPerMs * 1000;
 
-        double newLatitude = Math.toDegrees(Math.asin(Math.sin(Math.toRadians(latitude))
-                * Math.cos(distance / RADIUS_EARTH) + Math.cos(Math.toRadians(latitude))
-                * Math.sin(distance / RADIUS_EARTH) * Math.cos(angleRad)));
-        double newLongitude = longitude + Math.toDegrees(Math.atan2(Math.sin(angleRad)
-                        * Math.sin(distance / RADIUS_EARTH) * Math.cos(Math.toRadians(latitude)),
-                Math.cos(distance / RADIUS_EARTH) - Math.sin(Math.toRadians(latitude))
-                        * Math.sin(Math.toRadians(newLatitude))));
+        // Convert turn angle from degrees to radians
+        double turnAngleRadians = Math.toRadians(angle);
 
-        return new double[]{newLongitude, newLatitude};
+        // Calculate the change in latitude and longitude based on the distance traveled and turn angle
+        double deltaLatitude = distanceTraveled * Math.cos(turnAngleRadians);
+        double deltaLongitude = distanceTraveled * Math.sin(turnAngleRadians);
+
+        // Calculate the new latitude and longitude based on the current location and the change in latitude and longitude
+        double newLatitude = latitude + (deltaLatitude / 111111); // 111111 meters in one degree of latitude
+        double newLongitude = longitude + (deltaLongitude / (111111 * Math.cos(Math.toRadians(latitude)))); // Adjust for longitude's distance due to latitude
+
+        // Return the new latitude and longitude as an array
+        return new double[] {newLatitude, newLongitude};
     }
 
+
+    public static double[] calculateAirplanePosition(double speed, double course, double latitude, double longitude) {
+        double earthRadius = RADIUS_EARTH * 1000; // in meters
+        double distance = speed; // distance traveled in 1 second
+        double courseRadians = Math.toRadians(course); // convert course to radians
+        double latRadians = Math.toRadians(latitude); // convert latitude to radians
+        double longRadians = Math.toRadians(longitude); // convert longitude to radians
+
+        double newLatRadians = Math.asin(Math.sin(latRadians) * Math.cos(distance / earthRadius)
+                + Math.cos(latRadians) * Math.sin(distance / earthRadius) * Math.cos(courseRadians));
+        double newLongRadians = longRadians + Math.atan2(Math.sin(courseRadians) * Math.sin(distance / earthRadius) * Math.cos(latRadians),
+                Math.cos(distance / earthRadius) - Math.sin(latRadians) * Math.sin(newLatRadians));
+
+        double newLat = Math.toDegrees(newLatRadians); // convert back to degrees
+        double newLong = Math.toDegrees(newLongRadians); // convert back to degrees
+
+        double[] newPosition = { newLat, newLong };
+        return newPosition;
+    }
 
     /**
      * A method calculate course between two coordinate

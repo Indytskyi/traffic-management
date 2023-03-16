@@ -1,6 +1,7 @@
 package com.indytskyi.trafficmanagement.service;
 
 import static com.indytskyi.trafficmanagement.util.FlightNavigator.airplaneShift;
+import static com.indytskyi.trafficmanagement.util.FlightNavigator.calculateAirplanePosition;
 import static com.indytskyi.trafficmanagement.util.FlightNavigator.calculateCourse;
 import static com.indytskyi.trafficmanagement.util.FlightNavigator.isWithinRadius;
 
@@ -68,13 +69,15 @@ public class PlaneCalculation {
                 wayPoint.getLongitude(),
                 20)) {
 
-            double[] coordinates = airplaneShift(
-                    temporaryPoint.getLatitude(), temporaryPoint.getLongitude(),
-                    0,
-                    100,
-                    1);
+            double[] coordinates = calculateAirplanePosition(
+                    temporaryPoint.getFlightSpeedMetersPerSecond(),
+                    temporaryPoint.getHeadingDegrees(),
+                    temporaryPoint.getLatitude(),
+                    temporaryPoint.getLongitude()
+                    );
 
-            temporaryPoint = saveToAirplaneTemporaryPoint(airplane, temporaryPoint, coordinates);
+
+            temporaryPoint = saveToAirplaneTemporaryPoint(airplane, temporaryPoint, coordinates, temporaryPoint.getHeadingDegrees());
 
             TimeUnit.SECONDS.sleep(1);
         }
@@ -108,10 +111,8 @@ public class PlaneCalculation {
             double[] coordinates = airplaneShift(
                     temp.getLatitude(), temp.getLongitude(),
                     changeRateDegreesTemp,
-                    characteristic.getMaxSpeedMetersPerSecond(),
-                    1);
-
-            temp = saveToAirplaneTemporaryPoint(airplane, temp, coordinates);
+                    characteristic.getMaxSpeedMetersPerSecond());
+            temp = saveToAirplaneTemporaryPoint(airplane, temp, coordinates, headingDegreesTemp);
 
             TimeUnit.SECONDS.sleep(1);
         }
@@ -119,13 +120,14 @@ public class PlaneCalculation {
         return temp;
     }
 
-    private TemporaryPoint saveToAirplaneTemporaryPoint(Airplane airplane, TemporaryPoint temp, double[] coordinates) {
+    private TemporaryPoint saveToAirplaneTemporaryPoint(Airplane airplane, TemporaryPoint temp,
+                                                        double[] coordinates, double headingDegreesTemp) {
         temp = TemporaryPoint.builder()
-                .longitude(coordinates[0])
-                .latitude(coordinates[1])
+                .latitude(coordinates[0])
+                .longitude(coordinates[1])
                 .altitudeMeters(100.0)
                 .flightSpeedMetersPerSecond(temp.getFlightSpeedMetersPerSecond())
-                .headingDegrees(temp.getHeadingDegrees())
+                .headingDegrees(headingDegreesTemp)
                 .build();
 
         airplane.getFlights().get(airplane.getFlights().size() - 1).getPassedPoints().add(temp);
