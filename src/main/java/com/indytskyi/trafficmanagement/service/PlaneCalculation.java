@@ -74,7 +74,7 @@ public class PlaneCalculation {
                     temporaryPoint.getHeadingDegrees(),
                     temporaryPoint.getLatitude(),
                     temporaryPoint.getLongitude()
-                    );
+            );
 
 
             temporaryPoint = saveToAirplaneTemporaryPoint(airplane, temporaryPoint, coordinates, temporaryPoint.getHeadingDegrees());
@@ -91,7 +91,7 @@ public class PlaneCalculation {
         AirplaneCharacteristic characteristic = airplane.getAirplaneCharacteristic();
         TemporaryPoint temp = startPosition;
 
-        while (temp.getHeadingDegrees() != Math.round(angle)) {
+        while (temp.getHeadingDegrees() != angle) {
 
             double headingDegreesTemp = temp.getHeadingDegrees();
             double delta = angle - headingDegreesTemp;
@@ -107,7 +107,9 @@ public class PlaneCalculation {
 
             headingDegreesTemp = cornerBoundaryCheck(headingDegreesTemp);
             changeRateDegreesTemp = isRotationLessThanOneTurn(characteristic, delta, changeRateDegreesTemp);
-
+            if (changeRateDegreesTemp == delta) {
+                headingDegreesTemp = angle;
+            }
             double[] coordinates = airplaneShift(
                     temp.getLatitude(), temp.getLongitude(),
                     changeRateDegreesTemp,
