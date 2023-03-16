@@ -1,8 +1,8 @@
 package com.indytskyi.trafficmanagement.service;
 
-import static com.indytskyi.util.Gfg.airplaneShift;
-import static com.indytskyi.util.Gfg.calculateCourse;
-import static com.indytskyi.util.Gfg.isWithinRadius;
+import static com.indytskyi.trafficmanagement.util.FlightNavigator.airplaneShift;
+import static com.indytskyi.trafficmanagement.util.FlightNavigator.calculateCourse;
+import static com.indytskyi.trafficmanagement.util.FlightNavigator.isWithinRadius;
 
 import com.indytskyi.trafficmanagement.dto.StartTripDto;
 import com.indytskyi.trafficmanagement.model.Airplane;
@@ -10,12 +10,10 @@ import com.indytskyi.trafficmanagement.model.AirplaneCharacteristic;
 import com.indytskyi.trafficmanagement.model.Flight;
 import com.indytskyi.trafficmanagement.model.TemporaryPoint;
 import com.indytskyi.trafficmanagement.model.WayPoint;
-import com.indytskyi.trafficmanagement.service.impl.AirplaneService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -24,7 +22,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PlaneCalculation {
-
     private final AirplaneService airplaneService;
 
     public String startTrip(StartTripDto startTripDto) {
@@ -39,26 +36,13 @@ public class PlaneCalculation {
                 .build());
 
 
-        calculateRoute(airplane, startTripDto.wayPoints());
-        return "The plane arrived at its destination";
-    }
-
-
-    public void handle(Airplane airplane, List<WayPoint> wayPoints) {
-
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-        Runnable updatePosition = () -> {
-            for (int i = 0; i < wayPoints.size() - 1; i++) {
+        Runnable updatePosition = () -> calculateRoute(airplane, startTripDto.wayPoints());
 
-            }
-            airplaneService.save(airplane);
-        };
-
-        ScheduledFuture<?> updateHandler = scheduler.scheduleAtFixedRate(updatePosition, 0, 1, TimeUnit.SECONDS);
-        
+        scheduler.scheduleAtFixedRate(updatePosition, 0, 1, TimeUnit.SECONDS);
+        return "The airplane with id: " + startTripDto.id() + " flew";
     }
-
 
     @SneakyThrows
     public void calculateRoute(Airplane airplane, List<WayPoint> wayPoints) {
@@ -71,39 +55,43 @@ public class PlaneCalculation {
                             wayPoint.getLatitude(),
                             wayPoint.getLongitude()));
 
-
-            while (!isWithinRadius(temporaryPoint.getLatitude(),
-                    temporaryPoint.getLongitude(),
-                    wayPoint.getLatitude(),
-                    wayPoint.getLongitude(),
-                    20)) {
-
-                double[] coordinates = airplaneShift(
-                        temporaryPoint.getLatitude(), temporaryPoint.getLongitude(),
-                        0,
-                        100,
-                        1);
-
-                temporaryPoint = TemporaryPoint.builder()
-                        .longitude(coordinates[0])
-                        .latitude(coordinates[1])
-                        .altitudeMeters(100.0)
-                        .flightSpeedMetersPerSecond(temporaryPoint.getFlightSpeedMetersPerSecond())
-                        .headingDegrees(temporaryPoint.getHeadingDegrees())
-                        .build();
-
-                airplane.getFlights()
-                        .get(airplane.getFlights().size() - 1)
-                        .getPassedPoints()
-                        .add(temporaryPoint);
-
-                airplaneService.save(airplane);
-
-                Thread.sleep(1000);
-            }
-
+            temporaryPoint = directFlightToPoint(airplane, temporaryPoint, wayPoint);
         }
+    }
 
+
+    @SneakyThrows
+    private TemporaryPoint directFlightToPoint(Airplane airplane, TemporaryPoint temporaryPoint, WayPoint wayPoint) {
+        while (!isWithinRadius(temporaryPoint.getLatitude(),
+                temporaryPoint.getLongitude(),
+                wayPoint.getLatitude(),
+                wayPoint.getLongitude(),
+                20)) {
+
+            double[] coordinates = airplaneShift(
+                    temporaryPoint.getLatitude(), temporaryPoint.getLongitude(),
+                    0,
+                    100,
+                    1);
+
+            temporaryPoint = TemporaryPoint.builder()
+                    .longitude(coordinates[0])
+                    .latitude(coordinates[1])
+                    .altitudeMeters(100.0)
+                    .flightSpeedMetersPerSecond(temporaryPoint.getFlightSpeedMetersPerSecond())
+                    .headingDegrees(temporaryPoint.getHeadingDegrees())
+                    .build();
+
+            airplane.getFlights()
+                    .get(airplane.getFlights().size() - 1)
+                    .getPassedPoints()
+                    .add(temporaryPoint);
+
+            airplaneService.save(airplane);
+
+            TimeUnit.SECONDS.sleep(1);
+        }
+        return temporaryPoint;
     }
 
 
@@ -127,7 +115,7 @@ public class PlaneCalculation {
                 changeRateDegreesTemp = -Math.abs(changeRateDegreesTemp);
             }
 
-            headingDegreesTemp = cornerBoundaryCheck(temp, headingDegreesTemp);
+            headingDegreesTemp = cornerBoundaryCheck(headingDegreesTemp);
             changeRateDegreesTemp = isRotationLessThanOneTurn(characteristic, delta, changeRateDegreesTemp);
 
             double[] coordinates = airplaneShift(
@@ -146,16 +134,16 @@ public class PlaneCalculation {
             airplane.getFlights().get(airplane.getFlights().size() - 1).getPassedPoints().add(temp);
 
             airplaneService.save(airplane);
-            Thread.sleep(1000);
+            TimeUnit.SECONDS.sleep(1);
         }
 
         return temp;
     }
 
-    private double cornerBoundaryCheck(TemporaryPoint temp, double headingDegreesTemp) {
+    private double cornerBoundaryCheck(double headingDegreesTemp) {
         if (headingDegreesTemp > 360) {
             headingDegreesTemp -= 360;
-        } else if (temp.getHeadingDegrees() < 0) {
+        } else if (headingDegreesTemp < 0) {
             headingDegreesTemp += 360;
         }
         return headingDegreesTemp;

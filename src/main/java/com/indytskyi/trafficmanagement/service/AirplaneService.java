@@ -1,4 +1,4 @@
-package com.indytskyi.trafficmanagement.service.impl;
+package com.indytskyi.trafficmanagement.service;
 
 
 import com.indytskyi.trafficmanagement.model.Airplane;

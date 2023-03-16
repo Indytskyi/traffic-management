@@ -1,4 +1,4 @@
-package com.indytskyi.util;
+package com.indytskyi.trafficmanagement.util;
 
 import static java.lang.Math.asin;
 import static java.lang.Math.cos;
@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @UtilityClass
 @Slf4j
-public class Gfg {
+public class FlightNavigator {
 
     private static final int RADIUS_EARTH = 6371;
 
@@ -64,11 +64,11 @@ public class Gfg {
         double distance = speed * time;
 
         double newLatitude = Math.toDegrees(Math.asin(Math.sin(Math.toRadians(latitude))
-                * Math.cos(distance / 6371) + Math.cos(Math.toRadians(latitude))
-                * Math.sin(distance / 6371) * Math.cos(angleRad)));
+                * Math.cos(distance / RADIUS_EARTH) + Math.cos(Math.toRadians(latitude))
+                * Math.sin(distance / RADIUS_EARTH) * Math.cos(angleRad)));
         double newLongitude = longitude + Math.toDegrees(Math.atan2(Math.sin(angleRad)
-                        * Math.sin(distance / 6371) * Math.cos(Math.toRadians(latitude)),
-                Math.cos(distance / 6371) - Math.sin(Math.toRadians(latitude))
+                        * Math.sin(distance / RADIUS_EARTH) * Math.cos(Math.toRadians(latitude)),
+                Math.cos(distance / RADIUS_EARTH) - Math.sin(Math.toRadians(latitude))
                         * Math.sin(Math.toRadians(newLatitude))));
 
         return new double[]{newLongitude, newLatitude};

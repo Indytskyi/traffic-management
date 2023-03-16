@@ -3,7 +3,7 @@ package com.indytskyi.trafficmanagement.controller;
 import com.indytskyi.trafficmanagement.dto.StartTripDto;
 import com.indytskyi.trafficmanagement.model.Airplane;
 import com.indytskyi.trafficmanagement.service.PlaneCalculation;
-import com.indytskyi.trafficmanagement.service.impl.AirplaneService;
+import com.indytskyi.trafficmanagement.service.AirplaneService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
