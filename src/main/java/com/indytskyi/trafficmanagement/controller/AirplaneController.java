@@ -31,8 +31,8 @@ public class AirplaneController {
         return ResponseEntity.ok(airplaneService.findById(id));
     }
 
-    @PostMapping("/{id}/start")
-    public ResponseEntity<String> startAirplane(@PathVariable Long id, @RequestBody StartTripDto startTripDto) {
+    @PostMapping("/start")
+    public ResponseEntity<String> startAirplane(@RequestBody StartTripDto startTripDto) {
         return ResponseEntity.ok(planeCalculation.startTrip(startTripDto));
     }
 

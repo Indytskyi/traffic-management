@@ -1,0 +1,9 @@
+spring:
+  data:
+    mongodb:
+      username: artemInd
+      password: artemInd
+      host: localhost
+      port: 27017
+      database: airport
+      authentication-database: admin

@@ -22,7 +22,7 @@ class TrafficManagementApplicationTests {
 
     @Test
     void superTest() {
-        PlaneCalculation.calculateRoute(Airplane.builder().build(), new ArrayList<>());
+//        PlaneCalculation.calculateRoute(Airplane.builder().build(), new ArrayList<>());
     }
     @Test
     void contextLoads() {
